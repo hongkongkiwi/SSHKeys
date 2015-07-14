@@ -91,7 +91,7 @@ echo "-> Wrote repository URL to config file sshkeys.conf"
 if [ -d "$CLONE_PATH" ]; then
     if [ -d "$CLONE_PATH/.git" ] || "$GIT_BIN -C $CLONE_PATH" rev-parse --git-dir > /dev/null 2>&1; then
         echo "-> Directory already exists and is a Git repo, will update from master repo instead"
-        bash "$CRONTAB_SCRIPT"
+        bash "$CRONTAB_SCRIPT" "$CONFIG_FILE"
     else
         echo "X> $CLONE_PATH directory exists and is NOT a git repo"
         echo "ERROR: Please fix this manually by removing the existing SSHKeys directory"
