@@ -32,7 +32,7 @@ submit pull requests, or donate me some money for beer :-)
 
 ### TODO
 
-1) I would like to add encryption so your not storing your ssh keys publically in the repo
-2) Add the option during setup to copy and paste your own repo address (mine is currently hard coded)
-3) Be able to use different tools rather than git (for example mercurial)
-4) Email user the repo changes from the local version & also when the local repo is changed from remote (should be a red flag, tampering perhaps?)
+1. I would like to add encryption so your not storing your ssh keys publically in the repo
+2. Add the option during setup to copy and paste your own repo address (mine is currently hard coded)
+3. Be able to use different tools rather than git (for example mercurial)
+4. Email user the repo changes from the local version & also when the local repo is changed from remote (should be a red flag, tampering perhaps?)
