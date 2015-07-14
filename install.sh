@@ -111,11 +111,19 @@ fi
 
 echo "-> Setup successfully installed SSHKeys"
 
-if [[ $(confirm "Would you like to install the update script into crontab for automated updating? [Y/n]"; echo $?) -ne 0 ]]; then
+if [[ $(confirm "Would you like to install the update script into crontab for automated updating? [Y/n]"; echo $?) -eq 0 ]]; then
     echo "-> Setup automatic updating in crontab"
     # Add to crontab with no duplication
     ( crontab -l | grep -v "$CRON_CMD" ; echo "$CRON_JOB" ) | crontab -
 else
+    if [[ $(crontab -l | grep -q "$CRON_JOB") -ne 0 ]]; then
+        echo "Looks like the script is already installed in crontab!"
+        if [[ $(confirm "Would you like to remove it? [y/N]"; echo $?) -eq 0 ]]; then
+            echo "-> Removed automatic update script from crontab"
+            # Remove it from crontab
+            ( crontab -l | grep -v "$CRON_CMD" ) | crontab -
+        fi
+    fi
     echo
     echo "If you change your mind later you can add the following to crontab"
     echo "@daily $CRONTAB_SCRIPT"
@@ -123,10 +131,6 @@ fi
 
 echo
 echo "Hooray! Everything is setup now"
-
-#To remove it from the crontab:
-
-#( crontab -l | grep -v "$croncmd" ) | crontab -
 
 exit 0
 
