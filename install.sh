@@ -68,10 +68,10 @@ else
 fi
 
 # Check if SSHKeys directory already exists
-if [[ -d "$CLONE_PATH" ]]; then
+if [ -d "$CLONE_PATH" ]; then
     if [ -d "$CLONE_PATH/.git" ] || "$GIT_BIN -C $CLONE_PATH" rev-parse --git-dir > /dev/null 2>&1; then
         echo "-> Directory already exists and is a Git repo, will update from master repo instead"
-        #bash $CRONTAB_SCRIPT
+        bash "$CRONTAB_SCRIPT"
     else
         echo "X> $CLONE_PATH directory exists and is NOT a git repo"
         echo "ERROR: Please fix this manually by removing the existing SSHKeys directory"
@@ -81,7 +81,7 @@ if [[ -d "$CLONE_PATH" ]]; then
     fi
 else
     echo "-> Cloning repository into $CLONE_PATH"
-    #"$GIT_BIN" clone "$REPO_URL"
+    "$GIT_BIN" clone --quiet "$REPO_URL" "$CLONE_PATH" || echo "X> Failed to clone repo!"; exit 3
 fi
 
 if [ -f "$AUTHORIZED_KEYS_FILE" -o -h "$AUTHORIZED_KEYS_FILE" ]; then
