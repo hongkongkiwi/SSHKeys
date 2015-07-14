@@ -1,14 +1,14 @@
 Automated SSH Public Key Pulling for Fun & Profit
 =========
 
-# What?
+## What?
 I wrote this script was a way to easily setup more machines and keep all my SSH public keys in sync
 
-# Why?
+## Why?
 I always loose track of which machines have which access keys setup, 
 this makes it easier and (arguably) safer
 
-# Install
+## Install
 First run this command to initially setup on your machine
 
 `bash <(curl -s https://raw.githubusercontent.com/hongkongkiwi/SSHKeys/master/install.sh)`
@@ -18,15 +18,14 @@ And it's that simple. The setup script will guide you through everything you nee
 If you want to uinstall later simply do
 
 `rm -Rf "$HOME/.ssh/SSHKeys"`
+
 `rm "$HOME/.ssh/authorized_keys"`
 
-# Is this secure?
-Seems fine to me as long as you keep your Github password safe (I recommend turning on two factor authentication)
+## Is this secure?
+Seems fine to me as long as you keep your Github password safe (I recommend turning on two factor authentication). See below for some features that I think will make 
+it more safe if implemented.
 
-I have considered in future getting the crontab script to email you if there are remote changes, seems like a reasonable precaution, but for now this feature is not 
-implemented.
-
-# Contributing
+## Contributing
 
 If you want to improve my scripts please feel free to fork them and 
 submit pull requests, or donate me some money for beer :-)
