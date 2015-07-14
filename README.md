@@ -15,6 +15,10 @@ First run this command to initially setup on your machine
 
 And it's that simple. The setup script will guide you through everything you need. It will even setup automatic cron updating (if you want)
 
+If you want to uinstall later simply do
+`rm -Rf "$HOME/.ssh/SSHKeys"`
+`rm "$HOME/.ssh/authorized_keys"`
+
 # Is this secure?
 Seems fine to me as long as you keep your Github password safe (I recommend turning on two factor authentication)
 
