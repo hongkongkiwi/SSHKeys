@@ -9,6 +9,9 @@ I always loose track of which machines have which access keys setup,
 this makes it easier and (arguably) safer
 
 ## Install
+
+Ensure you have git installed, otherwise the install script will fail (nicely).
+
 First run this command to initially setup on your machine
 
 `bash <(curl -s https://raw.githubusercontent.com/hongkongkiwi/SSHKeys/master/install.sh)`
