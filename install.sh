@@ -24,12 +24,13 @@ fi
 CLONE_BASE_PATH="$HOME/.ssh"
 CLONE_NAME="SSHKeys"
 CLONE_PATH="$CLONE_BASE_PATH/$CLONE_NAME"
+CONFIG_FILE="$CLONE_BASE_PATH/sshkeys.conf"
 CRONTAB_SCRIPT="$CLONE_PATH/crontab.sh"
 REPO_AUTHORIZED_KEYS_FILE="$CLONE_PATH/authorized_keys"
 AUTHORIZED_KEYS_FILE="$HOME/.ssh/authorized_keys"
-REPO_URL="https://github.com/hongkongkiwi/SSHKeys.git"
+DEFAULT_REPO_URL="https://github.com/hongkongkiwi/SSHKeys.git"
 GIT_BIN="/usr/bin/git"
-CRON_CMD="/bin/bash \"$CRONTAB_SCRIPT\" > /dev/null"
+CRON_CMD="/bin/bash \"$CRONTAB_SCRIPT\" \"$CONFIG_FILE\" &> /dev/null"
 CRON_JOB="@hourly $CRON_CMD"
 
 ### SETUP SOME USEFUL FUNCTIONS ###
@@ -48,16 +49,28 @@ confirm () {
 
 ### SCRIPT STARTS FROM HERE ###
 
+# It's important that we have Git on the local machine
+if [[ ! -f "$GIT_BIN" ]]; then
+    echo "Git is not installed! Please install with apt-get install git first"
+    exit 255
+fi
+
 echo "This will install SSHKeys for automated updating of public key logins"
 if [[ $(confirm "Are you sure you want proceed? [y/N]: "; echo $?) -ne 0 ]]; then
     echo "- Aborted"
     exit 1
 fi
 
-# It's important that we have Git on the local machine
-if [[ ! -f "$GIT_BIN" ]]; then
-    echo "Git is not installed! Please install with apt-get install git first"
-    exit 255
+# Get the repo address
+read -p "Enter Repository URL [$DEFAULT_REPO_URL]: " REPO_URL
+# Set the repo url or if empty use the default
+REPO_URL=${REPO_URL:-$DEFAULT_REPO_URL}
+
+echo "-> Checking if the repo url is valid..."
+
+if [ $("$GIT_BIN" ls-remote --exit-code "$REPO_URL" &>/dev/null; echo $?) -ne 0 ]; then
+    echo "X> That is an invalid Git repository!"
+    echo "- Aborting"
 fi
 
 # Check if .ssh directory exists, if not create it
@@ -66,6 +79,13 @@ if [[ ! -d "$CLONE_BASE_PATH" ]]; then
 else
     echo "-> .ssh directory exists for current user $USER"
 fi
+
+# Write config file values
+echo "REPO_URL='${REPO_URL}'" > "$CONFIG_FILE"
+echo "GIT_BIN='${GIT_BIN}'" >> "$CONFIG_FILE"
+echo "REPO_PATH='${CLONE_PATH}'" >> "$CONFIG_FILE"
+
+echo "-> Wrote repository URL to config file sshkeys.conf"
 
 # Check if SSHKeys directory already exists
 if [ -d "$CLONE_PATH" ]; then
@@ -91,7 +111,7 @@ if [ -f "$AUTHORIZED_KEYS_FILE" -o -h "$AUTHORIZED_KEYS_FILE" ]; then
             echo "-> Authorized Keys file already exists and is the correct symolic link"      
         else
             echo "X> Authorized Keys file already exists and is a symbolic link pointing to $existing_symlink"
-            echo "ERROR: I don't know how to deal with this, please manaually create the link using this command and re-run the install"
+            echo 'ERROR: I dont know how to deal with this, please manaually create the link using this command and re-run the install'
             echo "  ln -s\"$REPO_AUTHORIZED_KEYS_FILE\" \"$AUTHORIZED_KEYS_FILE\""
             exit 254
         fi
