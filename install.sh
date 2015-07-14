@@ -29,7 +29,7 @@ CRONTAB_SCRIPT="$CLONE_PATH/crontab.sh"
 REPO_AUTHORIZED_KEYS_FILE="$CLONE_PATH/authorized_keys"
 AUTHORIZED_KEYS_FILE="$HOME/.ssh/authorized_keys"
 DEFAULT_REPO_URL="https://github.com/hongkongkiwi/SSHKeys.git"
-GIT_BIN="/usr/bin/git"
+GIT_BIN=`which git`
 CRON_CMD="/bin/bash \"$CRONTAB_SCRIPT\" \"$CONFIG_FILE\" &> /dev/null"
 CRON_JOB="@hourly $CRON_CMD"
 
