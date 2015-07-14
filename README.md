@@ -11,16 +11,15 @@ this makes it easier and (arguably) safer
 # Install
 First run this command to initially setup on your machine
 
-`bash <(curl -s 
-https://raw.githubusercontent.com/hongkongkiwi/SSHKeys/master/install.sh)`
+`bash <(curl -s https://raw.githubusercontent.com/hongkongkiwi/SSHKeys/master/install.sh)`
 
-Then after your done, add this line to your crontab to sync the keys 
-once nightly
+And it's that simple. The setup script will guide you through everything you need. It will even setup automatic cron updating (if you want)
 
-`@daily /home/andy/.ssh/SSHKeys/crontab.sh`
+# Is this secure?
+Seems fine to me as long as you keep your Github password safe (I recommend turning on two factor authentication)
 
-Now your done! Your keys will sync once per day to whatever is in your 
-repository.
+I have considered in future getting the crontab script to email you if there are remote changes, seems like a reasonable precaution, but for now this feature is not 
+implemented.
 
 # Contributing
 
