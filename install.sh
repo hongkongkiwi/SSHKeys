@@ -71,6 +71,7 @@ echo "-> Checking if the repo url is valid..."
 if [ $("$GIT_BIN" ls-remote --exit-code "$REPO_URL" &>/dev/null; echo $?) -ne 0 ]; then
     echo "X> That is an invalid Git repository!"
     echo "- Aborting"
+    exit 5
 fi
 
 # Check if .ssh directory exists, if not create it
@@ -100,8 +101,11 @@ if [ -d "$CLONE_PATH" ]; then
         exit 253
     fi
 else
-    echo "-> Cloning repository into $CLONE_PATH"
-    "$GIT_BIN" clone --quiet "$REPO_URL" "$CLONE_PATH" || echo "X> Failed to clone repo!"; exit 3
+    echo "-> Cloning repository into $CLONE_PATH..."
+    if [ $("$GIT_BIN" clone --quiet "$REPO_URL" "$CLONE_PATH"; echo $?) -ne 0 ]; then 
+        echo "X> Failed to clone repo!"
+        exit 3
+    fi
 fi
 
 if [ -f "$AUTHORIZED_KEYS_FILE" -o -h "$AUTHORIZED_KEYS_FILE" ]; then

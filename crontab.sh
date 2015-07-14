@@ -26,5 +26,5 @@ cd "$REPO_PATH"
 "$GIT_BIN" fetch --quiet --all && "$GIT_BIN" reset --quiet --hard origin/master
 
 # Exit based on last command
-exit $?
+#exit $?
 
