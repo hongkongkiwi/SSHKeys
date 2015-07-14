@@ -4,6 +4,12 @@
 # This script is designed to be run remotely if you don't have it setup yet on this computer, that is about it
 ##
 
+# We dont need root and it may confuse some things
+if [ "$EUID" -eq 0 ]; then 
+    echo "Please do not run this script as root!"
+    exit 2
+fi
+
 # Check which OS we are running
 PLATFORM='unknown'
 unamestr=`uname`
@@ -86,7 +92,7 @@ if [ -f "$AUTHORIZED_KEYS_FILE" -o -h "$AUTHORIZED_KEYS_FILE" ]; then
         else
             echo "X> Authorized Keys file already exists and is a symbolic link pointing to $existing_symlink"
             echo "ERROR: I don't know how to deal with this, please manaually create the link using this command and re-run the install"
-            echo "ln -s\"$REPO_AUTHORIZED_KEYS_FILE\" \"$AUTHORIZED_KEYS_FILE\""
+            echo "  ln -s\"$REPO_AUTHORIZED_KEYS_FILE\" \"$AUTHORIZED_KEYS_FILE\""
             exit 254
         fi
     elif [ -f "$AUTHORIZED_KEYS_FILE" ]; then
@@ -101,7 +107,7 @@ if [ -f "$AUTHORIZED_KEYS_FILE" -o -h "$AUTHORIZED_KEYS_FILE" ]; then
     else
         echo "X> It seems like the authorized key file already exists but is in a format we cannot understand"
         echo "ERROR: I don't know how to deal with this, please manaually create the link using this command and re-run the install"
-        echo "ln -s\"$REPO_AUTHORIZED_KEYS_FILE\" \"$AUTHORIZED_KEYS_FILE\""
+        echo "  ln -s\"$REPO_AUTHORIZED_KEYS_FILE\" \"$AUTHORIZED_KEYS_FILE\""
         exit 254
     fi
 else
@@ -111,22 +117,30 @@ fi
 
 echo "-> Setup successfully installed SSHKeys"
 
-if [[ $(confirm "Would you like to install the update script into crontab for automated updating? [Y/n]"; echo $?) -eq 0 ]]; then
-    echo "-> Setup automatic updating in crontab"
-    # Add to crontab with no duplication
-    ( crontab -l | grep -v "$CRON_CMD" ; echo "$CRON_JOB" ) | crontab -
-else
-    if [[ $(crontab -l | grep -q "$CRON_JOB") -ne 0 ]]; then
-        echo "Looks like the script is already installed in crontab!"
-        if [[ $(confirm "Would you like to remove it? [y/N]"; echo $?) -eq 0 ]]; then
-            echo "-> Removed automatic update script from crontab"
-            # Remove it from crontab
-            ( crontab -l | grep -v "$CRON_CMD" ) | crontab -
-        fi
+cron_installed=`crontab -l | grep -q "^$CRON_JOB$"; echo $?`
+
+if [ $cron_installed -ne 0 ]; then
+    if [ $(confirm "Would you like to install the update script into crontab for automated updating? [Y/n]"; echo $?) -eq 0 ]; then
+        echo "-> Setup automatic updating in crontab"
+        # Add to crontab with no duplication
+        ( crontab -l | grep -v "$CRON_CMD" ; echo "$CRON_JOB" ) | crontab -
+    else
+        echo "-> crontab is not setup"
+        echo
+        echo "You have chosen not to setup crontab, that means you must run the script manually to update your SSHKeys, you can run it using the following command"
+        echo "  bash $CRONTAB_SCRIPT"
     fi
-    echo
-    echo "If you change your mind later you can add the following to crontab"
-    echo "@daily $CRONTAB_SCRIPT"
+else
+    echo "Looks like the script is already installed in crontab!"
+    if [ $(confirm "Would you like to remove it? [y/N]"; echo $?) -eq 0 ]; then
+        echo "-> Removed automatic update script from crontab"
+        # Remove it from crontab
+        ( crontab -l | grep -v "$CRON_JOB" ) | crontab -
+
+        echo
+        echo "If you change your mind later you can add the following to crontab"
+        echo "@daily $CRONTAB_SCRIPT"
+    fi
 fi
 
 echo
